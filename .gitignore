@@ -1,0 +1,25 @@
+# Data — distributed via Zenodo, not tracked here
+data/
+results/
+
+# paper/ receives generated figures; the metric-source table is config and ships
+paper/*
+!paper/paper2_metric_source.csv
+
+# R
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+renv/library/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*~
+.vscode/
+.idea/
+
+# Output
+*.log

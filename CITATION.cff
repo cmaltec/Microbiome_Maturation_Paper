@@ -1,0 +1,59 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the software and the associated article."
+title: "Analysis pipeline for: Host genetics contributes to microbiome maturation trajectories and pathway-level function in swine"
+abstract: >-
+  Fourteen numbered R scripts plus a shared plotting theme, reproducing the per-animal microbiome maturation descriptors,
+  pedigree-based animal-model heritability estimates, random-regression h2(t),
+  feature-level heritability across taxonomic, gene and pathway aggregation, and all
+  manuscript figures.
+type: software
+license: MIT
+version: 1.0.0
+authors:
+  - family-names: Maltecca
+    given-names: Christian
+    orcid: "https://orcid.org/0000-0002-9996-4680"
+    affiliation: "Department of Animal Science, North Carolina State University, Raleigh, NC, USA"
+  - family-names: Gini
+    given-names: Chiara
+    orcid: "https://orcid.org/0000-0003-4833-2306"
+    affiliation: "Department of Animal Science, North Carolina State University, Raleigh, NC, USA"
+  - family-names: Musa
+    given-names: Jacob
+    orcid: "https://orcid.org/0000-0002-5628-7499"
+    affiliation: "Department of Animal Sciences, Purdue University, West Lafayette, IN, USA"
+  - family-names: Byrd
+    given-names: MaryKate H.
+    orcid: "https://orcid.org/0000-0002-6338-3147"
+    affiliation: "Department of Animal Sciences, Purdue University, West Lafayette, IN, USA"
+  - family-names: Brito
+    given-names: Luiz F.
+    orcid: "https://orcid.org/0000-0002-5819-0922"
+    affiliation: "Department of Animal Sciences, Purdue University, West Lafayette, IN, USA"
+  - family-names: Johnson
+    given-names: Jay S.
+    orcid: "https://orcid.org/0000-0001-5773-4142"
+    affiliation: "Division of Animal Sciences, University of Missouri, Columbia, MO, USA"
+  - family-names: Jiang
+    given-names: Jicai
+    orcid: "https://orcid.org/0000-0001-6890-7539"
+    affiliation: "Department of Animal Science, North Carolina State University, Raleigh, NC, USA"
+  - family-names: Tiezzi
+    given-names: Francesco
+    orcid: "https://orcid.org/0000-0002-4358-9236"
+    affiliation: "Department of Agriculture, Food, Environment and Forestry, University of Florence, Firenze, Italy"
+keywords:
+  - microbiome maturation
+  - heritability
+  - swine
+  - animal model
+  - metagenome-assembled genomes
+references:
+  - type: article
+    title: "Host genetics contributes to microbiome maturation trajectories and pathway-level function in swine"
+    journal: Microbiome
+    year: 2026
+    notes: "DOI to be added on acceptance"
+    authors:
+      - family-names: Maltecca
+        given-names: Christian

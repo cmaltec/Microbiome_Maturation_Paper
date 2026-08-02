@@ -1,0 +1,30 @@
+metric,class,source,reason
+maz_mean,1-Age prediction,either,obs/imp essentially identical (0.499/0.507); use obs for consistency with MAZ pipeline (RF input is observed-only)
+maz_slope,1-Age prediction,either,obs/imp identical (0.300/0.300); use obs for consistency with MAZ pipeline
+bc_to_adult_mean,2-Distance to adult,imp,obs h2=0 fails; imp recovers signal (0.08) by completing trajectories
+bc_to_adult_slope,2-Distance to adult,either,obs/imp essentially identical (0.274/0.255); use obs (slightly higher)
+aitchison_slope,2-Distance to adult,imp,imp h2 0.483 vs obs 0.368 — completing trajectories adds animals; smooth contrast preserved by FPCA
+rel_maturity_w24,2-Distance to adult,imp,imp h2 0.288 vs obs 0.166 — sparse-coverage animals contribute via complete trajectories
+gompertz_k,3-Growth curve (descriptive only),drop,per-animal Gompertz unstable at 4-6 tp (~25% boundary fits); h2 not reported; replaced by t70/t75 (Alt C) and RRM
+gompertz_ti,3-Growth curve (descriptive only),drop,same instability as gompertz_k; not reported for h2
+gompertz_A,3-Growth curve (descriptive only),drop,same instability; not reported for h2 (population-level dip-fit only)
+logistic_k,3-Growth curve (descriptive only),drop,redundant with gompertz_k and same instability
+logistic_t0,3-Growth curve (descriptive only),drop,same instability
+gd_constr_A,3-Growth curve (descriptive only),drop,modified-Gompertz population-level only
+gd_constr_k,3-Growth curve (descriptive only),drop,modified-Gompertz population-level only
+gd_constr_ti,3-Growth curve (descriptive only),drop,modified-Gompertz population-level only
+t70_imp,3-Growth curve (Alt C),imp,time to 70% maturity via linear interpolation on PACE trajectory; h2=0.26 (SE 0.21); no boundary issues; no line confound (p=0.18)
+t75_imp,3-Growth curve (Alt C),imp,time to 75% maturity; h2=0.26 (SE 0.23); same properties as t70
+intra_bc_var,4-Stability,obs,imp h2 collapses to 0 — smoothing removes the within-animal fluctuation that IS the trait
+volatility_mean,4-Stability,obs,imp h2 collapses to 0 — same mechanism
+volatility_slope,4-Stability,obs,imp h2 collapses to 0 — same mechanism
+shannon_cv,4-Stability,obs,imp/obs same (0.193/0.192); use obs for class consistency (stability metric)
+shannon_mean,5-Diversity,either,both h2=0
+shannon_slope,5-Diversity,either,obs/imp essentially identical (0.209/0.232); use obs
+shannon_w24,5-Diversity,either,both h2=0
+BC_FPC1,6-FPCA,either,obs/imp identical (0.133/0.134); FPC modes are robust to imp regime
+BC_FPC2,6-FPCA,either,obs/imp identical (0.444/0.440)
+BC_FPC3,6-FPCA,either,both h2=0
+shan_FPC1,6-FPCA,either,both h2=0
+shan_FPC2,6-FPCA,either,both h2=0
+shan_FPC3,6-FPCA,either,both h2=0
