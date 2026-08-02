@@ -49,6 +49,13 @@ keywords:
   - animal model
   - metagenome-assembled genomes
 references:
+  - type: data
+    title: "Processed phenotype matrices and pedigree for: Host genetics contributes to microbiome maturation trajectories and pathway-level function in swine"
+    doi: 10.5281/zenodo.21761857
+    year: 2026
+    authors:
+      - family-names: Maltecca
+        given-names: Christian
   - type: article
     title: "Host genetics contributes to microbiome maturation trajectories and pathway-level function in swine"
     journal: Microbiome

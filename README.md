@@ -18,8 +18,8 @@ No data files are stored here. To run the pipeline you need:
 
 | What | Where | Notes |
 |---|---|---|
-| Feature matrices, pedigree, sample metadata, annotation | Zenodo, DOI `[to be added]` | MAG and KO abundance tables, three-generation pedigree, GTDB taxonomy, CheckM2 quality, KO→module map |
-| Pipeline intermediates | Zenodo, `results_metrics/` | MAZ scores, per-sample diversity curves, FPCA scores and the h² panels that scripts 02, 05, 06, 09, 11 and 12 read as inputs |
+| Feature matrices, pedigree, sample metadata, annotation | Zenodo, DOI [10.5281/zenodo.21761857](https://doi.org/10.5281/zenodo.21761857) | MAG and KO abundance tables, three-generation pedigree, GTDB taxonomy, CheckM2 quality, KO→module map |
+| Pipeline intermediates | same Zenodo record, `results_metrics/` | MAZ scores, per-sample diversity curves, FPCA scores and the h² panels that scripts 02, 05, 06, 09, 11 and 12 read as inputs |
 | Raw whole-genome shotgun reads | NCBI BioProject `[accession to be added]` | Only needed to regenerate the MAG catalog from scratch |
 
 Unpack the deposit so that its `data/` contents sit under `data/` and its
