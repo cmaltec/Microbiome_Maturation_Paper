@@ -34,6 +34,9 @@ suppressPackageStartupMessages({
 
 dir.create("data/metadata",  recursive = TRUE, showWarnings = FALSE)
 dir.create("data/processed", recursive = TRUE, showWarnings = FALSE)
+# 10_feature_level_h2.R reads the KO -> module map here; without it, it fetches
+# the current KEGG release, which differs from the deposited one.
+stopifnot(file.copy("data/ko_module_map.csv", "data/processed/ko_module_map.csv", overwrite = TRUE))
 
 TPS <- c("W3", "W6", "W9", "W12", "W15", "W17", "W21", "W24")
 

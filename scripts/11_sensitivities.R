@@ -34,6 +34,9 @@ lin <- read.csv("results/metrics/maturation_h2_line_sensitivity.csv",
                 stringsAsFactors = FALSE)
 w6  <- read.csv("results/metrics/maturation_h2_w6_scalars.csv",
                 stringsAsFactors = FALSE)
+# The W6+ file names the Aitchison slope aitchison_to_adult_slope; the other
+# three estimator files use aitchison_slope.
+w6$metric[w6$metric == "aitchison_to_adult_slope"] <- "aitchison_slope"
 
 # Map W6 metric names back to canonical names used in the obs/imp panels.
 # (13_w3_artifact_audit.R already maps internally; the saved file uses the
@@ -143,7 +146,13 @@ if (nrow(mat_full) >= 3) {
                 kwr$n, kwr$m, kwr$W))
     cat(sprintf("χ²(%d) = %.2f  p = %.4g\n",
                 kwr$df, kwr$chi2, kwr$p_chi2))
+    # permutation p for the robust panel (same scheme as the full panel)
+    set.seed(42)
+    Wr_perm <- replicate(B, kendall_W(apply(Mr, 2, sample))$W)
+    p_perm_r <- mean(Wr_perm >= kwr$W)
+    cat(sprintf("Permutation p (B=%d): p = %.4f\n", B, p_perm_r))
   } else {
+    p_perm_r <- NA
     kwr <- list(W = NA, chi2 = NA, df = NA, p_chi2 = NA, n = sum(rob_idx))
   }
 
@@ -155,7 +164,7 @@ if (nrow(mat_full) >= 3) {
     chi2 = c(kw$chi2, kwr$chi2),
     df = c(kw$df, kwr$df),
     p_chi2 = c(kw$p_chi2, kwr$p_chi2),
-    p_perm_9999 = c(p_perm, NA),
+    p_perm_9999 = c(p_perm, p_perm_r),
     stringsAsFactors = FALSE
   )
   write.csv(summary_out,

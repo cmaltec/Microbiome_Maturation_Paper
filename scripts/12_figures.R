@@ -28,7 +28,7 @@ suppressPackageStartupMessages({
   library(png); library(grid); library(Matrix); library(reshape2); library(ggrepel)
   library(ggh4x); library(ggnewscale)
 })
-source("src/paper2/palette.R")
+source("scripts/palette.R")
 
 week_map <- c(W3=3, W6=6, W9=9, W12=12, W15=15, W17=17, W21=21, W24=24)
 
@@ -39,10 +39,12 @@ h2       <- read.csv("results/metrics/maturation_h2_animal_model.csv", stringsAs
 thr      <- read.csv("results/metrics/maturation_threshold_metrics_imputed.csv", stringsAsFactors=FALSE)
 h2_thr   <- read.csv("results/metrics/maturation_h2_threshold.csv", stringsAsFactors=FALSE)
 ped      <- read.csv("data/metadata/pedigree.csv", stringsAsFactors=FALSE)
-samp_meta <- read.csv("data/metadata/sample_metadata.csv", stringsAsFactors=FALSE)
+samp_meta <- read.csv("data/sample_metadata.csv", stringsAsFactors=FALSE)
 
 # ---- h² and h²(t) data for Figs 3 and 4 ----
-rrm_h2t  <- read.csv("results/metrics/maturation_rrm_h2_by_week.csv", stringsAsFactors=FALSE)
+win_h2   <- read.csv("results/revision/window_h2/window_h2.csv", stringsAsFactors=FALSE)
+win_n    <- c(early = nrow(read.csv("results/revision/window_h2/scalars_W3_W12.csv")),
+              late  = nrow(read.csv("results/revision/window_h2/scalars_W15_W24.csv")))
 sire_blu <- read.csv("results/metrics/maturation_sire_blups.csv", stringsAsFactors=FALSE)
 w6_h2    <- tryCatch(read.csv("results/metrics/maturation_h2_w6_scalars.csv", stringsAsFactors=FALSE),
                      error=function(e) NULL)
@@ -367,7 +369,7 @@ f2b <- ggplot(rate_df, aes(x=rank, y=bc_slope, color=line, fill=line)) +
   geom_point(size=1.7, alpha=0.9, shape=21, stroke=0.3, color="grey15") +
   scale_color_manual(values=line_fills, guide="none") +
   scale_fill_manual (values=line_fills, name="Line") +
-  labs(x="Animal rank (slow → fast convergence)",
+  labs(x="Animal rank (fast → slow convergence)",
        y="BC-to-adult slope (ΔBC / week)",
        title="Per-animal maturation rate — heritable scalar",
        subtitle="h² = 0.28 ± 0.21 (W6+ refit 0.35); more negative slope = faster convergence") +
@@ -392,7 +394,7 @@ f2c <- ggplot(thr_long, aes(x=line, y=week_at_thr, fill=line)) +
   scale_fill_manual(values=line_fills, guide="none") +
   labs(x="", y="Week at threshold (PACE-imputed)",
        title="Threshold timing by line",
-       subtitle="t70 / t75 — heritable rate descriptors (t70 h² = 0.26 ± 0.22, t75 h² = 0.27 ± 0.23)") +
+       subtitle="t70 / t75 — heritable rate descriptors (t70 h² = 0.26 ± 0.21, t75 h² = 0.27 ± 0.23)") +
   theme_paper2() +
   theme(strip.text=element_text(face="bold", size=9))
 
@@ -702,38 +704,68 @@ fig3 <- (f3a + f3b + plot_layout(widths=c(1.7, 1)) +
          plot_annotation(tag_levels = "A")) & fig3_header_theme
 ggsave("paper/fig3_h2_per_trait.png", fig3, width=15, height=9, dpi=300)
 
-# FIG 4 — Age-dependent h² + genetic correlations (Obj 2B)
-#   Panel A: Random-regression h²(t) with ±1 SE ribbon (delta-method on the
-#            RRM variance components; fit by src/paper2/18_rrm_fit.R).
+# FIG 4 — h² by age window + genetic correlations (Obj 2B)
+#   Panel A: h² of the per-animal descriptors in the early (W3–W12) and late
+#            (W15–W24) windows (13_age_window_h2.R).
 #   Panel B: Calo r_EBV heatmap among per-animal trajectory traits, ordered
 #            by hierarchical clustering on 1 − |r|.
 cat("Fig 4...\n")
 
-rrm_h2t$trait_lab <- rrm_h2t$trait
-# Drop Shannon: its h²(t) tracks BC-to-adult almost exactly — visually redundant.
-# Keep BC-to-adult (community distance) + MAZ (age prediction) for contrast.
-rrm_keep <- rrm_h2t[rrm_h2t$trait %in% c("BC-to-adult", "MAZ"), ]
+win_lab <- c(maz_mean = "MAZ mean", maz_slope = "MAZ slope",
+             bc_to_adult_mean = "BC mean", bc_to_adult_slope = "BC slope",
+             aitchison_to_adult_slope = "Aitchison slope",
+             volatility_mean = "Volatility", volatility_slope = "Volatility slope",
+             intra_bc_var = "Intra-BC var", shannon_cv = "Shannon CV",
+             shannon_mean = "Shannon mean", shannon_slope = "Shannon slope")
+win_cls <- c(maz_mean = "Age prediction", maz_slope = "Age prediction",
+             bc_to_adult_mean = "Distance to adult", bc_to_adult_slope = "Distance to adult",
+             aitchison_to_adult_slope = "Distance to adult",
+             volatility_mean = "Stability", volatility_slope = "Stability",
+             intra_bc_var = "Stability", shannon_cv = "Stability",
+             shannon_mean = "Diversity", shannon_slope = "Diversity")
+win_cls_col <- c("Diversity" = "#3f7a3f", "Stability" = "#a07000",
+                 "Distance to adult" = "#2e5b85", "Age prediction" = "#b85c20")
+win_levels <- c(sprintf("Weeks 3–12 (n = %d)", win_n[["early"]]),
+                sprintf("Weeks 15–24 (n = %d)", win_n[["late"]]))
+ord <- names(win_lab)
+w <- win_h2
+w$label  <- factor(win_lab[w$trait], levels = rev(win_lab[ord]))
+w$window <- factor(w$window, levels = c("W3-W12", "W15-W24"), labels = win_levels)
+w$se  <- ifelse(is.na(w$h2_se) | w$h2 < 1e-4, 0, w$h2_se)
+w$lo  <- pmax(0, w$h2 - w$se); w$hi <- pmin(1, w$h2 + w$se)
+w$sig <- w$p_perm <= 0.05
+w$sidak <- w$p_perm <= 1 - 0.95^(1/9)
+w$fillc <- ifelse(w$sig, as.character(w$window), "none")
+w$dgrp <- factor(w$window, levels = rev(levels(w$window)))   # early window above late
 
-# Panel A — RRM h²(t) with ±1 SE ribbon (delta method, see 18_rrm_fit.R)
-# Pre-W12 "low-power zone" shading marks where community h²(t) sits near zero.
-f4a <- ggplot(rrm_keep, aes(x=week, y=h2, color=trait_lab, fill=trait_lab, group=trait_lab)) +
-  geom_ribbon(aes(ymin=pmax(0, h2 - h2_se), ymax=pmin(1, h2 + h2_se)),
-              alpha=0.18, color=NA) +
-  geom_line(linewidth=1.2, alpha=0.9) +
-  geom_point(size=2.7, alpha=0.95) +
-  scale_color_manual(values=c("BC-to-adult"=pal$h2, "MAZ"=pal$c2), name="") +
-  scale_fill_manual (values=c("BC-to-adult"=pal$h2, "MAZ"=pal$c2), guide="none") +
-  scale_x_continuous(breaks=c(3,6,9,12,15,17,21,24), limits=c(2.5, 24.5),
-                     expand=expansion(add=0)) +
-  scale_y_continuous(limits=c(0, 0.6), breaks=seq(0, 0.6, 0.1),
-                     expand=expansion(add=0)) +
-  labs(x="Week", y=expression(h^2*(t)),
-       title="Random-regression h²(t)",
-       subtitle="us(2) animal intercept+slope; ribbon = ±1 SE via delta method. Shannon h²(t) is not plotted (Table S5B).") +
+win_cols <- setNames(c(pal$h2, pal$c2), win_levels)
+y_cols <- win_cls_col[win_cls[ord]][rev(seq_along(ord))]
+dodge  <- position_dodge(width = 0.55)
+
+f4a <- ggplot(w, aes(x = h2, y = label, group = dgrp)) +
+  geom_errorbar(aes(xmin = lo, xmax = hi, color = window), width = 0,
+                orientation = "y", linewidth = 0.7, position = dodge) +
+  geom_point(aes(shape = window, fill = fillc, color = window), size = 3.1,
+             stroke = 0.9, position = dodge) +
+  geom_text(data = transform(w[w$sidak, ],
+                             yy = as.numeric(label) + ifelse(window == win_levels[1], 0.1375, -0.1375)),
+            aes(x = hi + 0.015, y = yy, label = "**"), inherit.aes = FALSE,
+            size = 3.6, color = "grey15", vjust = 0.75, hjust = 0) +
+  scale_color_manual(values = win_cols, name = NULL) +
+  scale_shape_manual(values = setNames(c(21, 24), win_levels), name = NULL) +
+  scale_fill_manual(values = c(win_cols, none = "white"), guide = "none") +
+  scale_x_continuous(breaks = seq(0, 0.6, 0.1), expand = expansion(add = c(0.005, 0))) +
+  coord_cartesian(xlim = c(0, 0.66)) +
+  labs(x = expression(h^2 ~ "(± 1 SE)"), y = NULL,
+       title = "Heritability by age window",
+       subtitle = "Filled: permutation p ≤ 0.05; open: p > 0.05; ** p ≤ 0.0057 (family-wise threshold).") +
   theme_paper2() +
-  theme(legend.position=c(0.18, 0.88),
-        legend.background=element_rect(fill=alpha("white", 0.7), color=NA),
-        legend.key.height=unit(0.9, "lines"))
+  theme(axis.text.y = element_text(size = 10, face = "bold", color = y_cols),
+        legend.position = c(0.70, 0.10),
+        legend.background = element_rect(fill = alpha("white", 0.85), color = NA),
+        legend.key.height = unit(0.9, "lines")) +
+  guides(color = guide_legend(override.aes = list(fill = unname(win_cols), shape = c(21, 24), linetype = 0)),
+         shape = "none")
 
 # Panel B — Calo r_EBV heatmap, ordered by hierarchical clustering on 1 − |r|
 sire_traits <- c("maz_mean","maz_slope","bc_to_adult_mean","bc_to_adult_slope",
@@ -838,9 +870,9 @@ fig4_header_theme <- theme(
   plot.title.position = "plot",
   plot.margin   = margin(t=6, r=10, b=6, l=10))
 
-fig4 <- (f4a + f4b + plot_layout(widths=c(1, 1.2)) +
+fig4 <- (f4a + f4b + plot_layout(widths=c(1, 1.35)) +
          plot_annotation(tag_levels = "A")) & fig4_header_theme
-ggsave("paper/fig4_h2t_and_correlations.png", fig4, width=15, height=8, dpi=300)
+ggsave("paper/fig4_window_h2_and_correlations.png", fig4, width=15.5, height=8, dpi=300)
 
 # FIG 6 — Cross-level feature heritability (Obj 3)
 cat("Fig 6...\n")
@@ -1336,7 +1368,7 @@ conc_sum <- read.csv("results/metrics/maturation_h2_concordance_summary.csv",
 conc_full <- conc_h2[complete.cases(conc_h2[, c("h2_obs","h2_imp",
                                                 "h2_within_line","h2_w6")]), ]
 w3_robust_set <- c("maz_mean", "intra_bc_var", "bc_to_adult_slope",
-                   "shannon_slope")
+                   "aitchison_slope", "shannon_slope")
 conc_full$w3_robust <- conc_full$metric %in% w3_robust_set
 conc_full$label <- h2_labels[conc_full$metric]
 conc_full$label[is.na(conc_full$label)] <- conc_full$metric[is.na(conc_full$label)]
@@ -1360,7 +1392,8 @@ conc_long$estimator <- factor(conc_long$estimator,
 W_all <- conc_sum$Kendall_W[conc_sum$panel == "all_metrics"]
 p_all <- conc_sum$p_perm_9999[conc_sum$panel == "all_metrics"]
 W_w3r <- conc_sum$Kendall_W[conc_sum$panel == "w3_robust"]
-p_w3r <- conc_sum$p_chi2[conc_sum$panel == "w3_robust"]
+p_w3r <- conc_sum$p_perm_9999[conc_sum$panel == "w3_robust"]
+n_w3r <- sum(conc_full$w3_robust); n_all <- nrow(conc_full)
 
 # End-of-line labels at the W6–W24 endpoint, with light repulsion to avoid
 # overlap when multiple metrics converge.
@@ -1381,8 +1414,8 @@ figS6 <- ggplot(conc_long, aes(x = estimator, y = h2,
                            size = 3.1, show.legend = FALSE,
                            max.overlaps = Inf, seed = 20260518) +
   scale_color_manual(values = c(`TRUE` = robust_color, `FALSE` = fragile_color),
-                     labels = c(`TRUE` = "W3-robust (4 metrics)",
-                                `FALSE` = "Attenuates on W6+ (2 metrics)"),
+                     labels = c(`TRUE` = sprintf("W3-robust (%d metrics)", n_w3r),
+                                `FALSE` = sprintf("Attenuates on W6+ (%d metrics)", n_all - n_w3r)),
                      name = NULL) +
   scale_x_discrete(expand = expansion(add = c(0.2, 1.1))) +
   scale_y_continuous(limits = c(0, 0.65), breaks = seq(0, 0.6, 0.1)) +
@@ -1390,8 +1423,8 @@ figS6 <- ggplot(conc_long, aes(x = estimator, y = h2,
        y = expression(h^2 ~ "(animal model, REML)"),
        title = "Cross-estimator concordance of per-animal h²",
        subtitle = sprintf(
-         "Kendall's W = %.2f on the W3-robust 4-metric subset (p = %.3f); W = %.2f on the full 6-metric panel (perm p = %.3f).",
-         W_w3r, p_w3r, W_all, p_all)) +
+         "Kendall's W = %.2f on the W3-robust %d-metric subset (perm p = %.3f); W = %.2f on the full %d-metric panel (perm p = %.3f).",
+         W_w3r, n_w3r, p_w3r, W_all, n_all, p_all)) +
   theme_paper2() +
   theme(legend.position = "bottom",
         panel.grid.major.x = element_blank(),
@@ -1404,7 +1437,7 @@ cat("\nAll figures saved to paper/\n")
 cat("  fig1_panels_BC.png       (design panels B + C; Fig 1A external)\n")
 cat("  fig2_maturation.png      (Obj 1)\n")
 cat("  fig3_h2_per_trait.png    (Obj 2A — per-trait h²)\n")
-cat("  fig4_h2t_and_correlations.png  (Obj 2B — h²(t) + Calo r_EBV)\n")
+cat("  fig4_window_h2_and_correlations.png  (h² by age window + Calo r_EBV)\n")
 cat("  fig6_cross_level_h2.png  (Obj 3 — per-MAG/KO/module distributions)\n")
 cat("Supplementary figures:\n")
 cat("  figS1_w3_attenuation_line_tests.png (line tests under full vs W6+)\n")
@@ -1420,7 +1453,7 @@ setwd(here::here())
 suppressPackageStartupMessages({
   library(ggplot2); library(patchwork); library(dplyr); library(tidyr)
 })
-source("src/paper2/palette.R")
+source("scripts/palette.R")
 
 blups <- read.csv("results/metrics/maturation_sire_blups.csv",
                   stringsAsFactors = FALSE)
