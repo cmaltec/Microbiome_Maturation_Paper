@@ -29,7 +29,9 @@ copies the derived inputs in `data/derived/` to `results/metrics/`.
 
 The outputs of scripts 06–15 behind the revised manuscript (random regression,
 permutation nulls, age-window heritabilities, genetic groups, sequencing depth;
-Tables S5 and S15) are tracked under `results/revision/`.
+Tables S5 and S15) are tracked under `results/revision/`. The permutation test summary
+reported in Table S5 is `results/revision/rrm/table_S5_perm_summary.csv`;
+`06b` also writes `rrm_permutation/perm_dLL_summary.csv`, which is not tracked.
 
 Sire, litter and grandparent identifiers in the deposit are anonymised
 (`S1`–`S7`, `L1`–`L13`, `GS*`/`GD*`). The relabelling preserves the pedigree
