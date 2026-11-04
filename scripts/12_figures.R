@@ -1353,22 +1353,21 @@ ggsave("paper/figS5_pheno_vs_genetic_correlation.png", figS5,
 
 # S6 — Cross-estimator concordance of h² (parallel-coordinates view)
 # Each metric's h² across four estimators (obs full, PACE-imputed, within-line,
-# W6–W24 balanced refit). Restricted to the 6 metrics with values in all four
-# panels. The four W3-robust metrics (W = 0.78 subpanel) are highlighted; the
-# two W3-attenuating metrics (W = 0.51 full panel) are shown in grey to expose
-# the within-panel reordering that drives the lower full-panel concordance.
+# W6–W24 balanced refit). Restricted to the metrics with values in all four
+# panels. The W3-robust metrics (heritable on W6+) are highlighted; the
+# remaining metric is shown in grey.
 cat("Supplementary S6 (cross-estimator concordance)...\n")
 conc_h2  <- read.csv("results/metrics/maturation_h2_concordance.csv",
                      stringsAsFactors = FALSE)
 conc_sum <- read.csv("results/metrics/maturation_h2_concordance_summary.csv",
                      stringsAsFactors = FALSE)
 
-# Keep metrics with all four estimators (= the 6-metric all-panel subset that
+# Keep metrics with all four estimators (= the all-panel subset that
 # the Kendall's W summary is computed on).
 conc_full <- conc_h2[complete.cases(conc_h2[, c("h2_obs","h2_imp",
                                                 "h2_within_line","h2_w6")]), ]
-w3_robust_set <- c("maz_mean", "intra_bc_var", "bc_to_adult_slope",
-                   "aitchison_slope", "shannon_slope")
+w3_robust_set <- c("maz_mean", "intra_bc_var", "volatility_mean",
+                   "bc_to_adult_slope", "aitchison_slope", "shannon_slope")
 conc_full$w3_robust <- conc_full$metric %in% w3_robust_set
 conc_full$label <- h2_labels[conc_full$metric]
 conc_full$label[is.na(conc_full$label)] <- conc_full$metric[is.na(conc_full$label)]
@@ -1415,7 +1414,8 @@ figS6 <- ggplot(conc_long, aes(x = estimator, y = h2,
                            max.overlaps = Inf, seed = 20260518) +
   scale_color_manual(values = c(`TRUE` = robust_color, `FALSE` = fragile_color),
                      labels = c(`TRUE` = sprintf("W3-robust (%d metrics)", n_w3r),
-                                `FALSE` = sprintf("Attenuates on W6+ (%d metrics)", n_all - n_w3r)),
+                                `FALSE` = sprintf("Attenuates on W6+ (%d metric%s)", n_all - n_w3r,
+                                                  ifelse(n_all - n_w3r == 1, "", "s"))),
                      name = NULL) +
   scale_x_discrete(expand = expansion(add = c(0.2, 1.1))) +
   scale_y_continuous(limits = c(0, 0.65), breaks = seq(0, 0.6, 0.1)) +

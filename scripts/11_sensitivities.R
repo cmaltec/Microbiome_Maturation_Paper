@@ -135,7 +135,8 @@ if (nrow(mat_full) >= 3) {
   cat(sprintf("Permutation p (B=%d): p = %.4f\n", B, p_perm))
 
   # --- Subset W on the W3-robust panel only ---
-  w3_robust <- c("maz_mean", "intra_bc_var",
+  # Metrics with all four estimators that are heritable (BH q < 0.10) on W6+.
+  w3_robust <- c("maz_mean", "intra_bc_var", "volatility_mean",
                  "bc_to_adult_slope", "aitchison_slope",
                  "shannon_slope", "t70", "t75")
   rob_idx <- mat_full$metric %in% w3_robust
