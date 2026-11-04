@@ -19,13 +19,17 @@ No data files are stored here. To run the pipeline you need:
 | What | Where | Notes |
 |---|---|---|
 | Feature matrices, pedigree, sample metadata, annotation | Zenodo, DOI [10.5281/zenodo.21761856](https://doi.org/10.5281/zenodo.21761856) (version 1.1.0 or later) | MAG and KO abundance tables, three-generation pedigree, GTDB taxonomy, CheckM2 quality, KO→module map, per-sample read counts |
-| Pipeline intermediates | same Zenodo record, `results_metrics/` | MAZ scores, per-sample diversity curves, FPCA scores and the h² panels that scripts 00c, 02, 05, 09, 11, 12 and 13 read as inputs |
-| Raw whole-genome shotgun reads | NCBI BioProject `[accession to be added]` | Only needed to regenerate the MAG catalog from scratch |
+| Pipeline intermediates | same Zenodo record, `data/derived/` | MAZ scores, per-sample diversity curves, FPCA scores and the h² panels that scripts 00c, 02, 05, 09, 11, 12 and 13 read as inputs |
+| Raw whole-genome shotgun reads | NCBI BioProject PRJNA1504886 | Only needed to regenerate the MAG catalog from scratch |
 
-Unpack the deposit so that its `data/` contents sit under `data/` and its
-`results_metrics/` contents under `results/metrics/`, then run
-`00a_prepare_inputs.R`, which derives `data/metadata/pedigree.csv` and pivots
-the long-format abundance tables into the wide matrices the pipeline reads.
+Unpack the deposit so that its `data/` folder sits at `data/`, then run
+`00a_prepare_inputs.R`, which derives `data/metadata/pedigree.csv`, pivots
+the long-format abundance tables into the wide matrices the pipeline reads, and
+copies the derived inputs in `data/derived/` to `results/metrics/`.
+
+The outputs of scripts 06–15 behind the revised manuscript (random regression,
+permutation nulls, age-window heritabilities, genetic groups, sequencing depth;
+Tables S5 and S15) are tracked under `results/revision/`.
 
 Sire, litter and grandparent identifiers in the deposit are anonymised
 (`S1`–`S7`, `L1`–`L13`, `GS*`/`GD*`). The relabelling preserves the pedigree
@@ -37,7 +41,7 @@ structure exactly, so every estimate reproduces.
 
 | # | Script | Produces |
 |---:|---|---|
-| 00a | `scripts/00a_prepare_inputs.R` | `data/metadata/pedigree.csv` and the wide MAG and KO matrices, from the deposited long-format tables |
+| 00a | `scripts/00a_prepare_inputs.R` | `data/metadata/pedigree.csv` and the wide MAG and KO matrices, from the deposited long-format tables; copies `data/derived/` to `results/metrics/` |
 | 00b | `scripts/00b_build_a_matrix.R` | Two-generation (sire + litter-as-dam) **A** and **A⁻¹**, used by the pedigree-depth sensitivity in 05 and by 10 |
 | 00c | `scripts/00c_revision_inputs.R` | Three- and two-generation **A⁻¹**, per-sample long table and per-animal trait table read by 06, 06b, 13 and 14 (`results/revision/inputs/`) |
 | 01 | `scripts/01_pace_imputation.R` | PACE (fdapace FPCA) imputation of per-sample MAG and Shannon trajectories |

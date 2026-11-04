@@ -1,6 +1,10 @@
 # Data — distributed via Zenodo, not tracked here
 data/
-results/
+results/*
+# outputs of scripts 06-15 behind the revised manuscript are tracked
+!results/revision/
+# 00c writes model inputs (A-inverse, per-sample tables) here; they derive from the deposit
+results/revision/inputs/
 
 # paper/ receives generated figures; the metric-source table is config and ships
 paper/*

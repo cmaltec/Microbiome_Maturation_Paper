@@ -37,6 +37,12 @@ dir.create("data/processed", recursive = TRUE, showWarnings = FALSE)
 # 10_feature_level_h2.R reads the KO -> module map here; without it, it fetches
 # the current KEGG release, which differs from the deposited one.
 stopifnot(file.copy("data/ko_module_map.csv", "data/processed/ko_module_map.csv", overwrite = TRUE))
+# Derived inputs deposited under data/derived/ (Zenodo >= 1.1.0) are read by the
+# scripts from results/metrics/.
+dir.create("results/metrics", recursive = TRUE, showWarnings = FALSE)
+derived <- list.files("data/derived", pattern = "\\.csv$", full.names = TRUE)
+stopifnot(length(derived) == 12,
+          file.copy(derived, "results/metrics", overwrite = TRUE))
 
 TPS <- c("W3", "W6", "W9", "W12", "W15", "W17", "W21", "W24")
 

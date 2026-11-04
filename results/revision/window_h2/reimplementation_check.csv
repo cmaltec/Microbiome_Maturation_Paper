@@ -1,0 +1,12 @@
+"trait","n","max_abs_diff","r"
+"maz_mean",77,5.32907051820075e-15,1
+"maz_slope",77,6.10622663543836e-16,1
+"bc_to_adult_mean",77,4.9960036108132e-16,1
+"bc_to_adult_slope",77,4.85722573273506e-17,1
+"aitchison_to_adult_slope",77,4.88498130835069e-15,1
+"volatility_mean",77,5.55111512312578e-16,1
+"volatility_slope",77,5.55111512312578e-17,1
+"intra_bc_var",77,4.85722573273506e-17,1
+"shannon_cv",77,2.91433543964104e-16,1
+"shannon_mean",77,5.32907051820075e-15,1
+"shannon_slope",77,4.85722573273506e-17,1
