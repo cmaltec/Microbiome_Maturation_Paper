@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use this software, please cite both the software and the associated article."
 title: "Analysis pipeline for: Host genetics contributes to microbiome maturation trajectories and pathway-level function in swine"
 abstract: >-
-  Twenty R scripts plus a shared plotting theme, reproducing the per-animal microbiome maturation descriptors,
+  Nineteen R scripts plus a shared plotting theme, reproducing the per-animal microbiome maturation descriptors,
   pedigree-based animal-model heritability estimates, random-regression variance components, heritability by age window,
   feature-level heritability across taxonomic, gene and pathway aggregation, and all
   manuscript figures.
@@ -60,7 +60,7 @@ references:
     title: "Host genetics contributes to microbiome maturation trajectories and pathway-level function in swine"
     journal: Microbiome
     year: 2026
-    notes: "DOI to be added on acceptance"
+    notes: "In press; DOI to be added on publication"
     authors:
       - family-names: Maltecca
         given-names: Christian

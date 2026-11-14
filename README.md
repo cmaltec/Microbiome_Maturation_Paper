@@ -4,9 +4,9 @@ Analysis code reproducing:
 
 > Maltecca C, Gini C, Musa J, Byrd MH, Brito LF, Johnson JS, Jiang J, Tiezzi F.
 > **Host genetics contributes to microbiome maturation trajectories and pathway-level function in swine.**
-> *Microbiome* (submitted). DOI: `[to be added on acceptance]`
+> *Microbiome* (in press). DOI: `[to be added on publication]`
 
-Twenty R scripts plus a shared plotting theme. Each script is
+Nineteen R scripts plus a shared plotting theme. Each script is
 self-contained and resolves paths relative to the repository root via
 `here::here()`; the `.here` file at the root is the anchor.
 
