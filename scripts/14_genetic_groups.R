@@ -4,6 +4,8 @@
 # - Purpose : Animal model with genetic groups for unknown parents vs selection line as fixed (Table S2b footnote)
 # - Created By : Christian Maltecca
 # - e-mail: cmaltec@ncsu.edu
+# - Note : Organized for this repository from the author's original analysis
+#          scripts with the help of Claude (Anthropic).
 #      / \       _-'
 #     /|  \-''- _ /
 # ' { |          \

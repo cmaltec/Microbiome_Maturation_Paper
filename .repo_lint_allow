@@ -1,0 +1,4 @@
+# Deliberately tracked: revision outputs behind Tables S5, S15 and Fig 4A (see README)
+results/revision/
+# Configuration read by scripts 05 and 08, not output
+paper/paper2_metric_source.csv

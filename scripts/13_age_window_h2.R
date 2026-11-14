@@ -4,6 +4,8 @@
 # - Purpose : Heritability of the per-animal descriptors in early (W3-W12) and late (W15-W24) windows (Fig 4A, Table S15)
 # - Created By : Christian Maltecca
 # - e-mail: cmaltec@ncsu.edu
+# - Note : Organized for this repository from the author's original analysis
+#          scripts with the help of Claude (Anthropic).
 #      / \       _-'
 #     /|  \-''- _ /
 # ' { |          \

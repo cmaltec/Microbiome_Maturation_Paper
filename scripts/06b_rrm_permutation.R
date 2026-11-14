@@ -4,6 +4,8 @@
 # - Purpose : Permutation test of pedigree structure in the random regression; Table S5A and S5B
 # - Created By : Christian Maltecca
 # - e-mail: cmaltec@ncsu.edu
+# - Note : Organized for this repository from the author's original analysis
+#          scripts with the help of Claude (Anthropic).
 #      / \       _-'
 #     /|  \-''- _ /
 # ' { |          \

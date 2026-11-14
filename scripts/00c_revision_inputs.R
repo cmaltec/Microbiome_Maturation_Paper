@@ -4,6 +4,8 @@
 # - Purpose : 3-gen and 2-gen A-inverse, per-sample long table and per-animal traits for scripts 06, 13, 14
 # - Created By : Christian Maltecca
 # - e-mail: cmaltec@ncsu.edu
+# - Note : Organized for this repository from the author's original analysis
+#          scripts with the help of Claude (Anthropic).
 #      / \       _-'
 #     /|  \-''- _ /
 # ' { |          \
